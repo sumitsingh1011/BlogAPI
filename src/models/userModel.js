@@ -6,4 +6,16 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true }
 }, { timestamps: true });
 
+// Format timestamps in responses
+userSchema.methods.toJSON = function() {
+    const user = this.toObject();
+    if (user.createdAt) {
+        user.createdAt = user.createdAt.toLocaleString();
+    }
+    if (user.updatedAt) {
+        user.updatedAt = user.updatedAt.toLocaleString();
+    }
+    return user;
+};
+
 module.exports = mongoose.model("User", userSchema);
