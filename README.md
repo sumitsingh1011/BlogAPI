@@ -5,8 +5,8 @@ A complete backend project built using Node.js, Express, MongoDB, and JWT Authen
 
 Installation & Setup
 1. Clone the Repo
-git clone <your-repo-link>
-cd blog-api
+git clone <https://github.com/sumitsingh1011/BlogAPI.git>
+cd BLOG-API
 
 2. Install Dependencies
 npm install
