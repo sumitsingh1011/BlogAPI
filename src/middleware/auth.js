@@ -1,14 +1,21 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
 
-module.exports = function(req, res, next) {
-    const token = req.header("Authorization")?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Access Denied" });
+module.exports = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    try {
-        const verified = jwt.verify(token, process.env.testDB);
-        req.user = verified;
-        next();
-    } catch (error) {
-        res.status(400).json({ message: "Invalid Token" });
-    }
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(403).json({ message: "Access Denied" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded; // VERY IMPORTANT
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid Token" });
+  }
 };

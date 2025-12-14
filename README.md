@@ -56,9 +56,13 @@ Delete Comment
 
 ✅ Security
 
-Password hashing (bcrypt)
-JWT authentication
-Secure headers
+- Passwords are hashed using bcrypt
+- JWT used for authentication
+- Protected routes using middleware
+- Environment variables used for secrets
+- Input validation to prevent invalid data
+- Pagination to avoid heavy DB load
+
 
 blog-api/
  ├── README.md

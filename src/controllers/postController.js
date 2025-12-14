@@ -11,14 +11,33 @@ exports.createPost = async (req, res) => {
 };
 
 // GET ALL POSTS
-exports.getAllPosts = async (req, res) => {
-    try {
-        const posts = await Post.find();
-        res.json({ success: true, posts });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+exports.getPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const sort = req.query.sort || "createdAt";
+
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find()
+      .sort({ [sort]: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("authorId", "username");
+
+    const totalPosts = await Post.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      page,
+      totalPages: Math.ceil(totalPosts / limit),
+      posts
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 // GET SINGLE POST
 exports.getPostById = async (req, res) => {
@@ -55,4 +74,19 @@ exports.deletePost = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};
+
+// SEARCH POSTS
+exports.searchPosts = async (req, res) => {
+  try {
+    const query = req.query.q;
+
+    const posts = await Post.find({
+      title: { $regex: query, $options: "i" }
+    });
+
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
